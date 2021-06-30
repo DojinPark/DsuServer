@@ -8,10 +8,9 @@ import (
 
 func main() {
 	e := router.New()
-	handler.RegisterTemplate(e)
 
-	g := e.Group("/auth")
-	middleware.RegisterAuth(g)
+	handler.RegisterTemplate(e)
+	middleware.RegisterAuth(e)
 
 	e.Logger.Fatal(e.Start(":1120"))
 }

@@ -9,15 +9,16 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func RegisterAuth(g *echo.Group) {
+func RegisterAuth(e *echo.Echo) {
+	e.POST("/login", login)
+
+	g := e.Group("/restricted")
 	config := middleware.JWTConfig{
 		Claims:     &JWTCustomClaims{},
 		SigningKey: []byte("secret"),
 	}
 	g.Use(middleware.JWTWithConfig(config))
-
-	g.POST("/login", login).Name = "/auth/login"
-	g.GET("/access", access).Name = "/auth/access"
+	g.GET("", restricted)
 }
 
 type JWTCustomClaims struct {
@@ -55,7 +56,7 @@ func login(c echo.Context) error {
 	})
 }
 
-func access(c echo.Context) error {
+func restricted(c echo.Context) error {
 	//test: Mock accessible message
 	//todo: send auth token, instead
 	user := c.Get("user").(*jwt.Token)
