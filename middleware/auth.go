@@ -67,7 +67,9 @@ func logout(c echo.Context) error {
 
 func restoreLogin(c echo.Context) error {
 	//todo: implement token comparison
-	//return
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "restored login",
+	})
 }
 
 func restricted(c echo.Context) error {
