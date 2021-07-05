@@ -11,11 +11,13 @@ import (
 
 func RegisterAuth(e *echo.Echo) {
 	e.POST("/login", login)
+	e.GET("/logout", logout)
+	e.GET("/restorelogin", restoreLogin)
 
 	g := e.Group("/restricted")
 	config := middleware.JWTConfig{
 		Claims:     &JWTCustomClaims{},
-		SigningKey: []byte("secret"),
+		SigningKey: []byte("my-secret"),
 	}
 	g.Use(middleware.JWTWithConfig(config))
 	g.GET("", restricted)
@@ -54,6 +56,18 @@ func login(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"token": encoded,
 	})
+}
+
+func logout(c echo.Context) error {
+	//todo: define logout processes
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "logged out",
+	})
+}
+
+func restoreLogin(c echo.Context) error {
+	//todo: implement token comparison
+	//return
 }
 
 func restricted(c echo.Context) error {

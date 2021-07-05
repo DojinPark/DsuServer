@@ -12,6 +12,8 @@ func New() *echo.Echo {
 	e.Renderer = m.Renderer()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	//test:
+	e.Use(middleware.CORS())
 
 	return e
 }
