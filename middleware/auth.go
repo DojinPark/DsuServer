@@ -48,7 +48,7 @@ func login(c echo.Context) error {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	encoded, err := token.SignedString([]byte("secret"))
+	encoded, err := token.SignedString([]byte("my-secret"))
 	if err != nil {
 		return err
 	}
@@ -60,6 +60,7 @@ func login(c echo.Context) error {
 
 func logout(c echo.Context) error {
 	//todo: define logout processes
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "logged out",
 	})
@@ -67,9 +68,28 @@ func logout(c echo.Context) error {
 
 func restoreLogin(c echo.Context) error {
 	//todo: implement token comparison
+	//user := c.Get("user").(*jwt.Token)
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "restored login",
 	})
+
+	token, err := jwt.ParseWithClaims(c.Get("user").(string), &JWTCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte("AllYourBase"), nil
+	})
+	return err
+
+	if claims, ok := token.Claims.(*JWTCustomClaims); ok && token.Valid {
+		encoded, err := token.SignedString([]byte("my-secret"))
+		if err != nil {
+			return err
+		}
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": claims.Name + " restored login",
+			"token":   encoded,
+		})
+	} else {
+		return echo.ErrUnauthorized
+	}
 }
 
 func restricted(c echo.Context) error {
